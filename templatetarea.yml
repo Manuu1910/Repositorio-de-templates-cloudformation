@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0d442a425e2e0a743
+      InstanceType: t2.micro
+      KeyName: KeypairOregon
+      BlockDeviceMappings: 
+        - DeviceName: "/dev/sdm"
+          Ebs: 
+            VolumeType: "gp3"
+            DeleteOnTermination: "true"
+            VolumeSize: "20"
+      SecurityGroups:  
+        - Ref: GrupodeSeguridadparaHTTP
+        - Ref: GrupodeSeguridadparaSSH       
+
+  GrupodeSeguridadparaHTTP:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow connections from everywhere
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0      
+  GrupodeSeguridadparaSSH:           
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow connections only for my IP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 192.168.1.0/32         
